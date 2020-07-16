@@ -5,13 +5,14 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.model.Requirement;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Find the requirements hierarchy or the requirements associated with a given test outcome
  */
-public interface RequirementsService {
+public interface RequirementsService extends ParentRequirementProvider {
     List<Requirement> getRequirements();
 
     Optional<Requirement> getParentRequirementFor(TestOutcome testOutcome);
@@ -27,4 +28,11 @@ public interface RequirementsService {
     List<Release> getReleasesFromRequirements();
 
     List<String> getRequirementTypes();
+
+    Collection<TestTag> getTagsOfType(List<String> tagTypes);
+
+    Collection<Requirement> getRequirementsWithTagsOfType(List<String> tagTypes);
+
+    boolean containsEmptyRequirementWithTag(TestTag tag);
+
 }

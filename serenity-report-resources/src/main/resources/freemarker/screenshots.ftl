@@ -53,7 +53,10 @@
     <div id="topbanner">
         <div id="logo"><a href="index.html"><img src="images/serenity-logo.png" border="0"/></a></div>
         <div id="projectname-banner" style="float:right">
-            <span class="projectname">${reportOptions.projectName}</span>
+            <span class="projectname">
+                <span class="projecttitle">${reportOptions.projectName}</span>
+                <span class="projectsubtitle">${reportOptions.projectSubTitle}</span>
+            </span>
         </div>
     </div>
 </div>
@@ -202,11 +205,12 @@
                 <#--<div class="panel-heading"><span class='error-caption ellipsis'>${testOutcome.result}: ${formatter.htmlAttributeCompatible(testOutcome.failureDetails.conciseErrorMessage, 40)}</span></div>-->
 
                     <#if (testOutcome.errorMessage)??>
-                        <div class="panel-heading title="${formatter.htmlAttributeCompatible(testOutcome.conciseErrorMessage)}">
-                            ${formatter.htmlAttributeCompatible(testOutcome.conciseErrorMessage, 244)}
-                        </div>
                         <#if (testOutcome.nestedTestFailureCause)??>
-                            <@stacktrace cause=testOutcome.nestedTestFailureCause id="overall" />
+                            <@stacktrace title=formatter.htmlAttributeCompatible(testOutcome.conciseErrorMessage) cause=testOutcome.nestedTestFailureCause id="overall" />
+                        <#else>
+                            <div class="panel-heading title="${formatter.htmlAttributeCompatible(testOutcome.conciseErrorMessage)}">
+                                ${formatter.htmlAttributeCompatible(testOutcome.conciseErrorMessage, 244)}
+                            </div>
                         </#if>
                     </#if>
 
@@ -228,7 +232,8 @@
                         <#assign caption = "${screenshot.html.description}">
                     </#if>
                 </#if>
-                <img src="${screenshot.filename}" title="${caption}" width="${screenshot.width?string.computer}"/>
+                <#list 0..<screenshot.depth as i></#list>
+                <img src="${screenshot.filename}" title="${(formatter.depthIndicatorForLevel(screenshot.depth))!} ${caption}" width="${screenshot.width?string.computer}"/>
             </#foreach>
             </div>
         </div>
@@ -236,9 +241,12 @@
 
     </div>
 </div>
+<#macro repeat input times>
+    <#list 0..<times as i>${input}</#list>
+</#macro>
 <div id="beforefooter"></div>
 <div id="bottomfooter">
-    <span class="version">Serenity BDD version ${serenityVersionNumber}</span>
+    <span class="version">Serenity BDD version ${serenityVersionNumber!"SNAPSHOT-BUILD"}</span>
 </div>
 </body>
 </html>

@@ -1,25 +1,43 @@
 
 # Serenity Core change log
-## Unreleased
-### [#1309](https://github.com/serenity-bdd/serenity-core/issues/1309) Serenity Rest Assured Always Getting -1 when Measuring Response Time
- * [26cf362d901f5ca](https://github.com/serenity-bdd/serenity-core/commit/26cf362d901f5ca) Fixed #1309
+## v2.0.5
+### [#1396](https://github.com/serenity-bdd/serenity-core/issues/1396) Gradle plugin class SerenityPlugin is not thread-safe
+ * [4ec560c88d3c9b8](https://github.com/serenity-bdd/serenity-core/commit/4ec560c88d3c9b8) remove the data members. they cause non thread-safe issue.
+
+fix issue #1396
+### [#1403](https://github.com/serenity-bdd/serenity-core/issues/1403) Broken Links in Serenity Report when Underscore is Used in Scenario Title
+ * [de0a36f4296684b](https://github.com/serenity-bdd/serenity-core/commit/de0a36f4296684b) Fixed #1403
 ### No issue
- * [482985c5a660776](https://github.com/serenity-bdd/serenity-core/commit/482985c5a660776) Minor refactoring
- * [0ee932d0a77c1bb](https://github.com/serenity-bdd/serenity-core/commit/0ee932d0a77c1bb) Added an interaction class to upload files.
-Usage:
-    actor.attemptsTo(Upload.theFile(pathToFile).to(SOME_TARGET);
- * [f25324de75cdf30](https://github.com/serenity-bdd/serenity-core/commit/f25324de75cdf30) fix: report Favicon
-## v1.9.30
-### No issue
- * [034a42906cb46bb](https://github.com/serenity-bdd/serenity-core/commit/034a42906cb46bb) Added support for markdown formatting in actor descriptions
- * [add76d98de591fe](https://github.com/serenity-bdd/serenity-core/commit/add76d98de591fe) Added support for Facts, to setup and teardown test data.
- * [bef67bd73adcde7](https://github.com/serenity-bdd/serenity-core/commit/bef67bd73adcde7) Harmonised the Screenplay Cast API
-## v1.9.29
-### No issue
- * [6a470595bada55d](https://github.com/serenity-bdd/serenity-core/commit/6a470595bada55d) Added a Subject to the Remembered Question class so that the key will appear in the reports.
- * [c099b3d76c78d5f](https://github.com/serenity-bdd/serenity-core/commit/c099b3d76c78d5f) Ensure that tasks are not executed for @Manual or @Pending tests.
- * [bc1f74ee6ee39e9](https://github.com/serenity-bdd/serenity-core/commit/bc1f74ee6ee39e9) Added `it` as a recognised screenplay pronoun.
- * [3e2a85f0d8bb0c4](https://github.com/serenity-bdd/serenity-core/commit/3e2a85f0d8bb0c4) Ensure that the tests do not fail when copying the same report asset from different threads
+ * [c4361e5efc75035](https://github.com/serenity-bdd/serenity-core/commit/c4361e5efc75035) Added Evidence section to the home page Test Results
+ * [283382ee30f332d](https://github.com/serenity-bdd/serenity-core/commit/283382ee30f332d) Added support for displaying evidence in the requirements reports
+ * [3876558aac6536f](https://github.com/serenity-bdd/serenity-core/commit/3876558aac6536f) You can now include downloadable files in the report data
+ * [06c622a3dcb61b5](https://github.com/serenity-bdd/serenity-core/commit/06c622a3dcb61b5) Updated tests
+ * [2e33342c70d3553](https://github.com/serenity-bdd/serenity-core/commit/2e33342c70d3553) Refined reporting
+ * [00406c1ab05ddee](https://github.com/serenity-bdd/serenity-core/commit/00406c1ab05ddee) Updated tests
+ * [0fb1bbfa6d1ea16](https://github.com/serenity-bdd/serenity-core/commit/0fb1bbfa6d1ea16) Added horizontal scrolling to embedded tables
+ * [7e726fb2f4295ee](https://github.com/serenity-bdd/serenity-core/commit/7e726fb2f4295ee) Fixed a reporting issue for JUnit Parameterized tests.
+ * [b74ffd176759caa](https://github.com/serenity-bdd/serenity-core/commit/b74ffd176759caa) Improved rendering of all tables, including for JBehave
+ * [6082d99f6d0174a](https://github.com/serenity-bdd/serenity-core/commit/6082d99f6d0174a) Correct rendering of embedded Cucumber tables
+ * [11a594f43271b90](https://github.com/serenity-bdd/serenity-core/commit/11a594f43271b90) remove JUnit5 implementation
+ * [4c5d2826ad7a540](https://github.com/serenity-bdd/serenity-core/commit/4c5d2826ad7a540) Updated support for JBehave
+ * [57b4c52b256da2c](https://github.com/serenity-bdd/serenity-core/commit/57b4c52b256da2c) Removed a redundant test
+ * [0caac239b5c5e88](https://github.com/serenity-bdd/serenity-core/commit/0caac239b5c5e88) You can now select individual example tables as well as scenarios to display in the feature summary
+ * [c45b44c16f6fe16](https://github.com/serenity-bdd/serenity-core/commit/c45b44c16f6fe16) Improved rendering of scenarios in the feature summaries
+ * [df11f2f327175a3](https://github.com/serenity-bdd/serenity-core/commit/df11f2f327175a3) Correct reporting for results in scenarios with multiple example tables
+ * [7bb74d4020b21d6](https://github.com/serenity-bdd/serenity-core/commit/7bb74d4020b21d6) use reflection to load Cucumber features
+ * [16cad681d59bf99](https://github.com/serenity-bdd/serenity-core/commit/16cad681d59bf99) Updated unit tests
+ * [2af14d73597da8c](https://github.com/serenity-bdd/serenity-core/commit/2af14d73597da8c) Example tables are now scrollable
+ * [ae67a7ae2f0cb33](https://github.com/serenity-bdd/serenity-core/commit/ae67a7ae2f0cb33) Updated a unit test
+ * [fd94645533d9a7e](https://github.com/serenity-bdd/serenity-core/commit/fd94645533d9a7e) Updated a unit test
+ * [c7d68e05b3f3700](https://github.com/serenity-bdd/serenity-core/commit/c7d68e05b3f3700) Improved reporting for data-driven tests, where each row of data is considered a separate test for reporting purposes
+ * [eb78dac866d783d](https://github.com/serenity-bdd/serenity-core/commit/eb78dac866d783d) explicit imports to avoid compilation problems.
+ * [ed625ec14c1298c](https://github.com/serenity-bdd/serenity-core/commit/ed625ec14c1298c) explicit imports - or else compilation problems.
+ * [8020c1124ce4346](https://github.com/serenity-bdd/serenity-core/commit/8020c1124ce4346) Use percentages instead of defect countt in the Unstable Features report
+ * [fa52a7b2b2dac49](https://github.com/serenity-bdd/serenity-core/commit/fa52a7b2b2dac49) Updated email reports
+ * [3dfaf6dfab126d3](https://github.com/serenity-bdd/serenity-core/commit/3dfaf6dfab126d3) Removed temporary files
+ * [0afd876862bac6e](https://github.com/serenity-bdd/serenity-core/commit/0afd876862bac6e) Removed temporary files
+ * [ff85d3222df114c](https://github.com/serenity-bdd/serenity-core/commit/ff85d3222df114c) Minor improvmements to the report layout
+ * [c03fe65681876e6](https://github.com/serenity-bdd/serenity-core/commit/c03fe65681876e6) use SerenityTestExecutionListener
  * [36f4a20ca924d28](https://github.com/serenity-bdd/serenity-core/commit/36f4a20ca924d28) feat: A Question to easily make assertions about remembered values
 
 Sample usage:
@@ -58,6 +76,171 @@ Or you can use a lambda expression for more flexibility:
 
 Also make sure that the returned list is not modified by anyone
 https://github.com/serenity-bdd/serenity-core/issues/1291
+ * [a562154a4fca666](https://github.com/serenity-bdd/serenity-core/commit/a562154a4fca666) possible fix for https://github.com/serenity-bdd/serenity-core/issues/1243
+## v2.0.4
+### No issue
+ * [47e1985c1d84bf0](https://github.com/serenity-bdd/serenity-core/commit/47e1985c1d84bf0) Fixed a defect in the requirements reports
+ * [51ec78311a5950c](https://github.com/serenity-bdd/serenity-core/commit/51ec78311a5950c) Updated version number
+ * [fac1a4e62981911](https://github.com/serenity-bdd/serenity-core/commit/fac1a4e62981911) Fine tuning reports
+ * [2354eff5c66e096](https://github.com/serenity-bdd/serenity-core/commit/2354eff5c66e096) Add pagination and searching on the requirements list when there are more than 10 requirements displayed on the page
+## v2.0.3
+### No issue
+ * [e1b98342ac50e32](https://github.com/serenity-bdd/serenity-core/commit/e1b98342ac50e32) Add pagination and searching on the requirements list when there are more than 10 requirements displayed on the page
+ * [b8f060f8e35c8ee](https://github.com/serenity-bdd/serenity-core/commit/b8f060f8e35c8ee) Updated unit tests
+ * [e344948823c7919](https://github.com/serenity-bdd/serenity-core/commit/e344948823c7919) Fixed a possible null pointer exception
+ * [1952b170e535e70](https://github.com/serenity-bdd/serenity-core/commit/1952b170e535e70) Improved reporting for the test results in the requirements hierarchy - requirements with unimplemented child requirements are now correctly reported as pending
+ * [5d8cc208f978437](https://github.com/serenity-bdd/serenity-core/commit/5d8cc208f978437) fix: Treat subclasses of an Ability as the superclass Ability
+## v2.0.2
+### No issue
+ * [7bab32464fc5a4d](https://github.com/serenity-bdd/serenity-core/commit/7bab32464fc5a4d) Updated version number
+ * [3e4ac850f6fba7c](https://github.com/serenity-bdd/serenity-core/commit/3e4ac850f6fba7c) Added the number of child requirements to each node in the requirements trees
+## v2.0.1
+### No issue
+ * [49cd2f413d00e1f](https://github.com/serenity-bdd/serenity-core/commit/49cd2f413d00e1f) Fixed a defect when feature files have no description
+## v2.0.0
+### No issue
+ * [34848647a5e2908](https://github.com/serenity-bdd/serenity-core/commit/34848647a5e2908) Updated tests
+ * [1c84f6796716d70](https://github.com/serenity-bdd/serenity-core/commit/1c84f6796716d70) Updated unit tests
+ * [c86bd9031a88d81](https://github.com/serenity-bdd/serenity-core/commit/c86bd9031a88d81) Improved displaying of stack trace errors
+ * [7dec10d476228af](https://github.com/serenity-bdd/serenity-core/commit/7dec10d476228af) Fine-tuning layout
+ * [bec5d0e4c7e6d1b](https://github.com/serenity-bdd/serenity-core/commit/bec5d0e4c7e6d1b) Requirements with no tests are shown as Pending in the requirements overview
+ * [460d186958f196c](https://github.com/serenity-bdd/serenity-core/commit/460d186958f196c) Fine-tuned layout and shifted default font size to 16px
+ * [b7c698e2c97cd61](https://github.com/serenity-bdd/serenity-core/commit/b7c698e2c97cd61) Don't include links for unimplemented scenarios
+ * [d3d032de71910ae](https://github.com/serenity-bdd/serenity-core/commit/d3d032de71910ae) Removed redundent report generation
+ * [b188760c14f10bc](https://github.com/serenity-bdd/serenity-core/commit/b188760c14f10bc) Added reports for most frequent failure types
+ * [6e0261bcd5d4101](https://github.com/serenity-bdd/serenity-core/commit/6e0261bcd5d4101) Minor fixes
+ * [33bdf6fcae7fbd4](https://github.com/serenity-bdd/serenity-core/commit/33bdf6fcae7fbd4) Miinor fixes
+ * [0d2c064320c9a59](https://github.com/serenity-bdd/serenity-core/commit/0d2c064320c9a59) Add modern Mac platforms
+ * [e7a9e9c6654a5e9](https://github.com/serenity-bdd/serenity-core/commit/e7a9e9c6654a5e9) Updated UI for report data
+ * [96b410dbe8413cc](https://github.com/serenity-bdd/serenity-core/commit/96b410dbe8413cc) Fixed unit tests
+ * [b39fdb1e526fc45](https://github.com/serenity-bdd/serenity-core/commit/b39fdb1e526fc45) Cucumber and JBehave support
+ * [83cc718bdcc084d](https://github.com/serenity-bdd/serenity-core/commit/83cc718bdcc084d) Work in progress
+ * [0bc7381d0e61f04](https://github.com/serenity-bdd/serenity-core/commit/0bc7381d0e61f04) Improved reporting for chained Ensure statements with RestAssured.
+## v1.9.45
+### No issue
+ * [b9b86a67e0ca533](https://github.com/serenity-bdd/serenity-core/commit/b9b86a67e0ca533) Added the ability to chain Ensure.that() methods, e.g Ensure.that().andThat()
+## v1.9.44
+### No issue
+ * [f943bcd874afd6e](https://github.com/serenity-bdd/serenity-core/commit/f943bcd874afd6e) Refactoring
+ * [3764ed59df09736](https://github.com/serenity-bdd/serenity-core/commit/3764ed59df09736) Improved error reporting
+ * [b55cbd00b5f50e3](https://github.com/serenity-bdd/serenity-core/commit/b55cbd00b5f50e3) Better error reporting if you forget the default constructor for a Performable
+ * [2240835bab30f0c](https://github.com/serenity-bdd/serenity-core/commit/2240835bab30f0c) Only auto-instrument tasks with the performAs method annotated with @Step.
+ * [6cdeb7e1c2e2ad1](https://github.com/serenity-bdd/serenity-core/commit/6cdeb7e1c2e2ad1) Basic support for using uninstrumented tasks in screenplay tests. Will work if the performable has a default constructor.
+## v1.9.43
+### No issue
+ * [e7c2a3157c15195](https://github.com/serenity-bdd/serenity-core/commit/e7c2a3157c15195) Inlined the email report
+ * [6db60b8124b4ce8](https://github.com/serenity-bdd/serenity-core/commit/6db60b8124b4ce8) Improved email reports
+## v1.9.42
+### No issue
+ * [5e3f0811410f64d](https://github.com/serenity-bdd/serenity-core/commit/5e3f0811410f64d) Refactoring
+ * [924391c9ac3c2d3](https://github.com/serenity-bdd/serenity-core/commit/924391c9ac3c2d3) Changed SerenityRest.checkThat() to Ensure.that() and added an equivalent Screenplay interaction
+## v1.9.41
+### No issue
+ * [30feea95de24498](https://github.com/serenity-bdd/serenity-core/commit/30feea95de24498) The SerenityRest.checkThat() method is a helper method to make a RestAssured assertion appear as a separate step.
+Usage:
+    SerenityRest.checkThat("Company name should be returned",
+                           response -> response.body("companyName", equalTo("Apple Inc.")));
+## v1.9.40
+### No issue
+ * [4053c807bd66956](https://github.com/serenity-bdd/serenity-core/commit/4053c807bd66956) Report non-JSON or XML results from REST queries more accurately
+## v1.9.39
+### [#1341](https://github.com/serenity-bdd/serenity-core/issues/1341) Report shows object reference when using GivenWhenThen.seeThat(Question, Predicate)
+ * [82462fc91039c31](https://github.com/serenity-bdd/serenity-core/commit/82462fc91039c31) Fixed #1341.
+
+Java 8 Predicates have no toString() method, and so appear as an object reference in the reports when they are used in Screenplay. This change addes a `returnsAValueThat` method which converts a Predicate to a printable Predicate. E.g.
+
+```
+        then(dana).should(seeThat("Total cost", theTotalCost(),
+                                   GivenWhenThen.returnsAValueThat("is equal to 15", isEqual(15))));
+```
+### [#1344](https://github.com/serenity-bdd/serenity-core/pull/1344) feat #1344 - Support for running Cucumber Serenity in parallel batches
+ * [b8d3a823c24c6b1](https://github.com/serenity-bdd/serenity-core/commit/b8d3a823c24c6b1) feat #1344 - Support for running Cucumber Serenity in parallel batches
+- this are the core changes required by https://github.com/serenity-bdd/serenity-cucumber/pull/164
+### [#1346](https://github.com/serenity-bdd/serenity-core/pull/1346) fix #1346 - validate stopwatch started where appropriate
+ * [85403ac3364310c](https://github.com/serenity-bdd/serenity-core/commit/85403ac3364310c) fix #1346 - validate stopwatch started where appropriate
+### No issue
+ * [96987eb56261252](https://github.com/serenity-bdd/serenity-core/commit/96987eb56261252) fix: Fixing comments on PR
+ * [5a972777d477741](https://github.com/serenity-bdd/serenity-core/commit/5a972777d477741) test: adding tests for experimental options on chrome capabilities
+ * [c657ce3755f18db](https://github.com/serenity-bdd/serenity-core/commit/c657ce3755f18db) feat: adding chrome_experimental_options as a property to add values directly into chrome Experimental Options
+ * [8ff614f1504c7e8](https://github.com/serenity-bdd/serenity-core/commit/8ff614f1504c7e8) Support Kobiton
+ * [6a8d653cbc919e3](https://github.com/serenity-bdd/serenity-core/commit/6a8d653cbc919e3) Updated to Selenium 3.14
+ * [87687beaa960e43](https://github.com/serenity-bdd/serenity-core/commit/87687beaa960e43) Updated to Selenium 3.14.0
+## v1.9.38
+### No issue
+ * [7730ab977d7cf05](https://github.com/serenity-bdd/serenity-core/commit/7730ab977d7cf05) Fixed issue with inlining CSS
+ * [ae49ac3a96760f8](https://github.com/serenity-bdd/serenity-core/commit/ae49ac3a96760f8) Fixed a typo
+ * [a2d6db0b28cc516](https://github.com/serenity-bdd/serenity-core/commit/a2d6db0b28cc516) Added a list of failing tests at the end of the email report
+ * [e0c8b119ceb135a](https://github.com/serenity-bdd/serenity-core/commit/e0c8b119ceb135a) Added Screenplay interactions for JavaScript clicks
+ * [f3456d82c836331](https://github.com/serenity-bdd/serenity-core/commit/f3456d82c836331) WIP
+ * [e71bda3457fb188](https://github.com/serenity-bdd/serenity-core/commit/e71bda3457fb188) WIP
+ * [19b53c92227c326](https://github.com/serenity-bdd/serenity-core/commit/19b53c92227c326) Refactoring common report config
+ * [a3313da379ffd58](https://github.com/serenity-bdd/serenity-core/commit/a3313da379ffd58) Refactoring common report config
+## v1.9.36
+### [#1325](https://github.com/serenity-bdd/serenity-core/issues/1325) Report aggregation failing due to null &#39;has&#39; (facts) on CastMember
+ * [d57fec8b10e1ac8](https://github.com/serenity-bdd/serenity-core/commit/d57fec8b10e1ac8) Fixed #1325.
+### [#1338](https://github.com/serenity-bdd/serenity-core/issues/1338) ReportGenerationFailedError causes test to intermittently fail
+ * [7b4171c2749fba2](https://github.com/serenity-bdd/serenity-core/commit/7b4171c2749fba2) Fixed #1338. Maybe.
+### [#1340](https://github.com/serenity-bdd/serenity-core/issues/1340) README.md of nivo-slider displayed as narrative
+ * [eca48d3bb89fd1e](https://github.com/serenity-bdd/serenity-core/commit/eca48d3bb89fd1e) Fixed #1340.
+### No issue
+ * [82c92a9c4b09b6d](https://github.com/serenity-bdd/serenity-core/commit/82c92a9c4b09b6d) Added support for extended reports in Gradle
+ * [b1d40b6cd67cd3e](https://github.com/serenity-bdd/serenity-core/commit/b1d40b6cd67cd3e) catch all exceptions while getting screenshots or page sources
+
+https://github.com/serenity-bdd/serenity-core/issues/1333
+## v1.9.35
+### No issue
+ * [c9b3f77a7227595](https://github.com/serenity-bdd/serenity-core/commit/c9b3f77a7227595) Updated appium to 6.1.0
+ * [8a51096f6d18ce7](https://github.com/serenity-bdd/serenity-core/commit/8a51096f6d18ce7) Updated htmlunit dependency
+## v1.9.34
+### No issue
+ * [784f6285ae9b76c](https://github.com/serenity-bdd/serenity-core/commit/784f6285ae9b76c) Improved reporting of tables and place-holders in scenario outlines.
+## v1.9.32
+### No issue
+ * [31c5c3bcbd511ad](https://github.com/serenity-bdd/serenity-core/commit/31c5c3bcbd511ad) Updated gradle plugin
+ * [2c7997861d3eb7b](https://github.com/serenity-bdd/serenity-core/commit/2c7997861d3eb7b) Added artifactory details
+ * [d7f28ee7272c622](https://github.com/serenity-bdd/serenity-core/commit/d7f28ee7272c622) Fixed a unit test
+ * [c20a0c9f593120b](https://github.com/serenity-bdd/serenity-core/commit/c20a0c9f593120b) Removed work-in-progress module from build
+ * [fe3c79d0cffb9c2](https://github.com/serenity-bdd/serenity-core/commit/fe3c79d0cffb9c2) Finalised email reporter
+ * [b877990e2d12312](https://github.com/serenity-bdd/serenity-core/commit/b877990e2d12312) Finalised email template
+ * [fc6a20dad3a2260](https://github.com/serenity-bdd/serenity-core/commit/fc6a20dad3a2260) chore: Updated unit tests
+ * [2ae1c1955c81841](https://github.com/serenity-bdd/serenity-core/commit/2ae1c1955c81841) chore:Updated unit tests
+ * [90cc8235a3dcc46](https://github.com/serenity-bdd/serenity-core/commit/90cc8235a3dcc46) feature: Added a SendKeys interaction as an alternative to Enter. The Enter interaction waits for the element to be enabled and clears the field before entering the text, whereas SendKeys will just call the Selenium sendKeys method directly.
+ * [8ba37605be3b2e6](https://github.com/serenity-bdd/serenity-core/commit/8ba37605be3b2e6) feature: You can now use readme.md files as narrative files for requirements reporting.
+ * [7f218bd5c5bd3cd](https://github.com/serenity-bdd/serenity-core/commit/7f218bd5c5bd3cd) Email reports (WIP)
+ * [6841bd88798cbf5](https://github.com/serenity-bdd/serenity-core/commit/6841bd88798cbf5) Updated Angular tests
+ * [5b9aa5dbe4e7fe4](https://github.com/serenity-bdd/serenity-core/commit/5b9aa5dbe4e7fe4) Updated Angular tests
+ * [2db73f75261b27e](https://github.com/serenity-bdd/serenity-core/commit/2db73f75261b27e) Fixed some failing tests
+ * [4d92a598d41c5a3](https://github.com/serenity-bdd/serenity-core/commit/4d92a598d41c5a3) test refactoring
+ * [7c88b5ca31ef074](https://github.com/serenity-bdd/serenity-core/commit/7c88b5ca31ef074) fix: fixed access issue with the Screenplay Upload class
+ * [884b7a1afb2c411](https://github.com/serenity-bdd/serenity-core/commit/884b7a1afb2c411) Basic requirements hierarchy
+ * [106abb1e6144411](https://github.com/serenity-bdd/serenity-core/commit/106abb1e6144411) Render the overview description as the introduction
+ * [4456c6f5127e873](https://github.com/serenity-bdd/serenity-core/commit/4456c6f5127e873) Minor refactoring
+ * [67b5744d40cc49f](https://github.com/serenity-bdd/serenity-core/commit/67b5744d40cc49f) fix: Overview files correctly rendered on the requirements home page
+ * [01ed5b8ad4db836](https://github.com/serenity-bdd/serenity-core/commit/01ed5b8ad4db836) Basic rendering
+ * [4fd0535557752d9](https://github.com/serenity-bdd/serenity-core/commit/4fd0535557752d9) WIP
+ * [fd2b115a584efc0](https://github.com/serenity-bdd/serenity-core/commit/fd2b115a584efc0) WIP
+## v1.9.31
+### [#1309](https://github.com/serenity-bdd/serenity-core/issues/1309) Serenity Rest Assured Always Getting -1 when Measuring Response Time
+ * [26cf362d901f5ca](https://github.com/serenity-bdd/serenity-core/commit/26cf362d901f5ca) Fixed #1309
+### No issue
+ * [17ccd8713bb322b](https://github.com/serenity-bdd/serenity-core/commit/17ccd8713bb322b) Fixed minor typo
+ * [4ddbb58c8e0a856](https://github.com/serenity-bdd/serenity-core/commit/4ddbb58c8e0a856) Updated changelog
+ * [482985c5a660776](https://github.com/serenity-bdd/serenity-core/commit/482985c5a660776) Minor refactoring
+ * [0ee932d0a77c1bb](https://github.com/serenity-bdd/serenity-core/commit/0ee932d0a77c1bb) Added an interaction class to upload files.
+Usage:
+    actor.attemptsTo(Upload.theFile(pathToFile).to(SOME_TARGET);
+ * [f25324de75cdf30](https://github.com/serenity-bdd/serenity-core/commit/f25324de75cdf30) fix: report Favicon
+## v1.9.30
+### No issue
+ * [034a42906cb46bb](https://github.com/serenity-bdd/serenity-core/commit/034a42906cb46bb) Added support for markdown formatting in actor descriptions
+ * [add76d98de591fe](https://github.com/serenity-bdd/serenity-core/commit/add76d98de591fe) Added support for Facts, to setup and teardown test data.
+ * [bef67bd73adcde7](https://github.com/serenity-bdd/serenity-core/commit/bef67bd73adcde7) Harmonised the Screenplay Cast API
+## v1.9.29
+### No issue
+ * [6a470595bada55d](https://github.com/serenity-bdd/serenity-core/commit/6a470595bada55d) Added a Subject to the Remembered Question class so that the key will appear in the reports.
+ * [c099b3d76c78d5f](https://github.com/serenity-bdd/serenity-core/commit/c099b3d76c78d5f) Ensure that tasks are not executed for @Manual or @Pending tests.
+ * [bc1f74ee6ee39e9](https://github.com/serenity-bdd/serenity-core/commit/bc1f74ee6ee39e9) Added `it` as a recognised screenplay pronoun.
+ * [3e2a85f0d8bb0c4](https://github.com/serenity-bdd/serenity-core/commit/3e2a85f0d8bb0c4) Ensure that the tests do not fail when copying the same report asset from different threads
 ## v1.9.28
 ### No issue
  * [689978d6df03218](https://github.com/serenity-bdd/serenity-core/commit/689978d6df03218) Updated REST tests
@@ -142,7 +325,6 @@ String environment = environmentVariables.optionalProperty("env").orElse("DEV")
  * [4675acf159f3187](https://github.com/serenity-bdd/serenity-core/commit/4675acf159f3187) Catch WebDriverExceptions while getting the pagesource
 
 https://github.com/serenity-bdd/serenity-core/issues/1247
- * [a562154a4fca666](https://github.com/serenity-bdd/serenity-core/commit/a562154a4fca666) possible fix for https://github.com/serenity-bdd/serenity-core/issues/1243
 ## v1.9.16
 ### No issue
  * [557bee706b22a3d](https://github.com/serenity-bdd/serenity-core/commit/557bee706b22a3d) Fixed visibility issue in the adding report data API
@@ -557,16 +739,16 @@ By default, files in src/test/resources/assets will be copied to target/site/ser
 ## v1.8.0
 ### No issue
  * [5bb7e39906e9580](https://github.com/serenity-bdd/serenity-core/commit/5bb7e39906e9580) fix bug when initialising page elements using AppiumFieldDecorator
+## v1.7.5
+### [#1027](https://github.com/serenity-bdd/serenity-core/pull/1027) #1027 - remove spurious characters from last commit 
+ * [e7b47c2ba3c26ff](https://github.com/serenity-bdd/serenity-core/commit/e7b47c2ba3c26ff) #1027 - remove spurious characters from last commit causing compilation error
+### No issue
  * [22d6212c34cf4fb](https://github.com/serenity-bdd/serenity-core/commit/22d6212c34cf4fb) Fixed a bug in the consequence reporting
  * [42d4ef4f36f2f29](https://github.com/serenity-bdd/serenity-core/commit/42d4ef4f36f2f29) Fixed a broken unit test
  * [8c0f25237f38509](https://github.com/serenity-bdd/serenity-core/commit/8c0f25237f38509) Waits should not be reported as consequences in the reports.
  * [fe536f89364e801](https://github.com/serenity-bdd/serenity-core/commit/fe536f89364e801) Fixed a bug with the Select element integration, where the select element was not used correctly as it is not visible for Selenium
  * [15ded2bff6b3d15](https://github.com/serenity-bdd/serenity-core/commit/15ded2bff6b3d15) Use FirefoxOptions instead of Capabilities, and added the headless.mode serenity property to allow headless browsing in Firefox.
  * [5c3d911b9ceca8e](https://github.com/serenity-bdd/serenity-core/commit/5c3d911b9ceca8e) Helper methods for anonymous tasks and interactions.
-## v1.7.5
-### [#1027](https://github.com/serenity-bdd/serenity-core/pull/1027) #1027 - remove spurious characters from last commit 
- * [e7b47c2ba3c26ff](https://github.com/serenity-bdd/serenity-core/commit/e7b47c2ba3c26ff) #1027 - remove spurious characters from last commit causing compilation error
-### No issue
  * [1a9348a5e504a1a](https://github.com/serenity-bdd/serenity-core/commit/1a9348a5e504a1a) Added the openUrl() method to open an absolute URL
  * [18b1d84edce9b05](https://github.com/serenity-bdd/serenity-core/commit/18b1d84edce9b05) add AcceptanceTestFullReporter listener to generate reports as in JUnitXMLOutcomeReporter
 ## v1.7.4

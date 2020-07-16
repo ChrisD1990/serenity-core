@@ -65,6 +65,17 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
                     'AnotherWord'  | 'another_word'
     }
 
+    def "should transform kebab-case to underscore"() {
+        when:
+        def kebabCaseForm = inflection.of(word).withKebabCase().toString()
+        then:
+        kebabCaseForm == expectedKebabCaseForm
+        where:
+        word          | expectedKebabCaseForm
+        'aWord'       | 'a-word'
+        'AnotherWord' | 'another-word'
+    }
+
     def "should captialize first word"() {
         when:
             def capitalized = inflection.of(word).startingWithACapital().toString()
@@ -100,6 +111,9 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
         'ASCII code'                   | 'ASCII'    | 0     | 5
         'big ASCII code'               | 'ASCII'    | 4     | 9
         'big AsciI'                    | 'AsciI'    | 4     | 9
+        'big X1'                       | 'X1'       | 4     | 6
+        'big FORM16'                   | 'FORM16'   | 4     | 10
+        'big 1FORM16'                  | '1FORM16'  | 4     | 11
     }
 
     def "should find multiple acronyms in a text"() {

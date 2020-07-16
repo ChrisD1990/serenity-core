@@ -101,6 +101,11 @@ public class MissingWebElement implements WebElementState {
     }
 
     @Override
+    public boolean isDisabled() {
+        return false;
+    }
+
+    @Override
     public void shouldNotBeEnabled() { }
 
     @Override
@@ -143,9 +148,24 @@ public class MissingWebElement implements WebElementState {
     }
 
     @Override
+    public String getValue() {
+        return "";
+    }
+
+    @Override
+    public String getText() {
+        return "";
+    }
+
+    @Override
     public WebElementState expect(String errorMessage) {
         this.expectedErrorMessage = errorMessage;
         return this;
+    }
+
+    @Override
+    public boolean isClickable() {
+        return false;
     }
 
     private void failWithMessage(String errorMessage) {

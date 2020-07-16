@@ -1,6 +1,7 @@
 package net.serenitybdd.core;
 
 import net.serenitybdd.core.collect.*;
+import net.serenitybdd.core.configurers.WebDriverConfigurer;
 import net.serenitybdd.core.di.*;
 import net.serenitybdd.core.environment.*;
 import net.serenitybdd.core.injectors.*;
@@ -313,6 +314,25 @@ public class Serenity {
         public SerenityConfigurer throwExceptionsImmediately() {
             Serenity.throwExceptionsImmediately();
             return this;
+        }
+    }
+
+    public static WebDriverConfigurer webdriver() {
+        return new WebDriverConfigurer();
+    }
+
+    /**
+     * Perform an arbitrary task and record it as a step in the reports.
+     * @param message
+     * @param reportableAction
+     */
+    public static void reportThat(String message, Reportable reportableAction) {
+        StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(message));
+        try {
+            reportableAction.perform();
+            StepEventBus.getEventBus().stepFinished();
+        } catch(Throwable assertionFailed) {
+            StepEventBus.getEventBus().stepFailed(new StepFailure(ExecutedStepDescription.withTitle(message), assertionFailed));
         }
     }
 }

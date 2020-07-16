@@ -39,13 +39,11 @@ public class ParameterizedTestsOutcomeAggregator {
             recordTestOutcomeAsSteps(testOutcome, scenarioOutcome);
 
             if (testOutcome.isManual()) {
-                scenarioOutcome = scenarioOutcome.asManualTest();
+                scenarioOutcome = scenarioOutcome.setToManual();
             }
 
             if (testOutcome.isDataDriven()) {
-                updateResultsForAnyExternalFailures(testOutcome, scenarioOutcomes.get(normalizedMethodName));
                 scenarioOutcome.addDataFrom(testOutcome.getDataTable());
-
             }
         }
 
@@ -85,13 +83,6 @@ public class ParameterizedTestsOutcomeAggregator {
             scenarioOutcomes.put(normalizedMethodName, scenarioOutcome);
         }
         return scenarioOutcomes.get(normalizedMethodName);
-    }
-
-    private void updateResultsForAnyExternalFailures(TestOutcome testOutcome, TestOutcome scenarioOutcome) {
-        if (rowResultsAreInconsistantWithOverallResult(testOutcome)) {
-            testOutcome.getDataTable().getRows().get(0).updateResult(testOutcome.getResult());
-            scenarioOutcome.addFailingExternalStep(new AssertionError(testOutcome.getTestFailureMessage()));
-        }
     }
 
     private boolean rowResultsAreInconsistantWithOverallResult(TestOutcome testOutcome) {

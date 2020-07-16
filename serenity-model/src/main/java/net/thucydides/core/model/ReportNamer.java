@@ -5,6 +5,8 @@ import net.thucydides.core.*;
 import net.thucydides.core.digest.*;
 import net.thucydides.core.util.*;
 
+import static net.thucydides.core.ThucydidesSystemProperty.SERENITY_COMPRESS_FILENAMES;
+
 /**
  * Determies the correct default name for test reports.
  * @author johnsmart
@@ -17,13 +19,15 @@ public class ReportNamer {
     }
 
     private ReportType type;
-    private boolean compressedFilename = true;
+    private boolean compressedFilename;
     private String prefix = "";
 
     private ReportNamer(final ReportType type) {
         this(type,
-             ConfiguredEnvironment.getEnvironmentVariables()
-                     .getPropertyAsBoolean(ThucydidesSystemProperty.SERENITY_COMPRESS_FILENAMES.getPropertyName(), true));
+                SERENITY_COMPRESS_FILENAMES.booleanFrom(ConfiguredEnvironment.getEnvironmentVariables(), true)
+//             ConfiguredEnvironment.getEnvironmentVariables()
+//                     .getPropertyAsBoolean(ThucydidesSystemProperty.SERENITY_COMPRESS_FILENAMES.getPropertyName(), true)
+        );
     }
 
     public ReportNamer(ReportType type, boolean compressedFilename) {
@@ -41,7 +45,12 @@ public class ReportNamer {
         return normalizedVersionOf(NameConverter.filesystemSafe(testNameWithoutIndex));
     }
 
-    private String optionallyCompressed(String text) {
+    public String getNormalizedTestReportNameFor(String testName) {
+        String testNameWithoutIndex = NameConverter.stripIndexesFrom(testName);
+        return normalizedVersionOf(NameConverter.filesystemSafe(testNameWithoutIndex));
+    }
+
+    public String optionallyCompressed(String text) {
         return compressedFilename ? Digest.ofTextValue(text) : text;
     }
 

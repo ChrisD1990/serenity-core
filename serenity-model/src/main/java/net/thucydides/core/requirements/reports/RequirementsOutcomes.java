@@ -3,13 +3,11 @@ package net.thucydides.core.requirements.reports;
 import net.serenitybdd.core.collect.NewList;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.model.OutcomeCounter;
-import net.thucydides.core.model.Release;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestType;
+import net.thucydides.core.model.*;
 import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.ReportNameProvider;
+import net.thucydides.core.reports.html.RequirementsFilter;
 import net.thucydides.core.requirements.ExcludedUnrelatedRequirementTypes;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.NarrativeReader;
@@ -22,6 +20,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static net.thucydides.core.ThucydidesSystemProperty.SERENITY_EXCLUDE_UNRELATED_REQUIREMENTS_OF_TYPE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -37,6 +36,7 @@ public class RequirementsOutcomes {
     private final ReleaseManager releaseManager;
     private final ReportNameProvider reportNameProvider;
     List<RequirementOutcome> flattenedRequirementOutcomes = null;
+    List<RequirementOutcome> leafRequirementOutcomes = null;
     private final String overview;
 
     public final static Integer DEFAULT_TESTS_PER_REQUIREMENT = 4;
@@ -223,6 +223,12 @@ public class RequirementsOutcomes {
         return testOutcomes;
     }
 
+    public Optional<TestResult> getTestResultForTestNamed(String name) {
+        Optional<? extends TestOutcome> testOutcome = testOutcomes.testOutcomeWithName(name);
+        return testOutcome.map(TestOutcome::getResult);
+
+    }
+
     @Override
     public String toString() {
         return "RequirementsOutcomes{" +
@@ -298,6 +304,17 @@ public class RequirementsOutcomes {
         return cachedTotal("IgnoredRequirementsCount", matchingRequirements);
     }
 
+    public int getSkippedRequirementsCount() {
+        if (totalIsCachedFor("SkippedRequirementsCount")) { return cachedTotalOf("SkippedRequirementsCount"); }
+
+        int matchingRequirements = (int) requirementOutcomes.stream()
+                .filter(RequirementOutcome::isSkipped)
+                .count();
+
+
+        return cachedTotal("SkippedRequirementsCount", matchingRequirements);
+    }
+
     public int getRequirementsWithoutTestsCount() {
         if (totalIsCachedFor("RequirementsWithoutTestsCount")) { return cachedTotalOf("RequirementsWithoutTestsCount"); }
 
@@ -362,8 +379,19 @@ public class RequirementsOutcomes {
         return flattenedRequirementOutcomes;
     }
 
+    public List<RequirementOutcome> getLeafRequirementOutcomes() {
+        if (leafRequirementOutcomes == null) {
+            leafRequirementOutcomes = geLeafRequirementOutcomes(getFlattenedRequirementOutcomes(requirementOutcomes));
+        }
+        return leafRequirementOutcomes;
+    }
+
+    public List<RequirementOutcome> geLeafRequirementOutcomes(List<RequirementOutcome> outcomes) {
+        return outcomes.stream().filter(outcome -> !outcome.getRequirement().hasChildren()).collect(Collectors.toList());
+    }
+
     public List<RequirementOutcome> getFlattenedRequirementOutcomes(List<RequirementOutcome> outcomes) {
-        Set<RequirementOutcome> flattenedOutcomes = new HashSet();
+        Set<RequirementOutcome> flattenedOutcomes = new HashSet<>();
 
         for (RequirementOutcome requirementOutcome : outcomes) {
             flattenedOutcomes.add(requirementOutcome);
@@ -494,8 +522,22 @@ public class RequirementsOutcomes {
                 .collect(Collectors.toList());
     }
 
+    public RequirementsOutcomes filteredByDisplayTag() {
+        return new RequirementsOutcomes(
+                reportNameProvider,
+                filteredByDisplayTag(requirementOutcomes),
+                testOutcomes,
+                parentRequirement,
+                environmentVariables,
+                issueTracking,
+                requirementsTagProviders,
+                releaseManager,
+                overview);
+    }
+
     public RequirementsOutcomes withoutUnrelatedRequirements() {
-        if (isEmpty(ThucydidesSystemProperty.THUCYDIDES_EXCLUDE_UNRELATED_REQUIREMENTS_OF_TYPE.from(environmentVariables))) {
+        if (SERENITY_EXCLUDE_UNRELATED_REQUIREMENTS_OF_TYPE.from(environmentVariables,"none").equalsIgnoreCase("none")) {
+        //if ("none".equalsIgnoreCase(SERENITY_EXCLUDE_UNRELATED_REQUIREMENTS_OF_TYPE.from(environmentVariables))) {
             return this;
         }
         return new RequirementsOutcomes(
@@ -514,7 +556,16 @@ public class RequirementsOutcomes {
 
         return requirementOutcomes.stream()
                 .filter(requirementOutcome -> !shouldPrune(requirementOutcome))
-                .map(requirementOutcome -> requirementOutcome.withoutUnrelatedRequirements())
+                .map(RequirementOutcome::withoutUnrelatedRequirements)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private List<RequirementOutcome> filteredByDisplayTag(List<RequirementOutcome> requirementOutcomes) {
+
+        return requirementOutcomes.stream()
+                .filter(this::shouldDisplay)
+                .map(requirementOutcome -> requirementOutcome.filteredByDisplayTag())
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -523,6 +574,11 @@ public class RequirementsOutcomes {
         return ((requirementOutcome.getTestCount() == 0)
                  && ExcludedUnrelatedRequirementTypes.definedIn(environmentVariables)
                 .excludeUntestedRequirementOfType(requirementOutcome.getRequirement().getType()));
+    }
+
+    private boolean shouldDisplay(RequirementOutcome requirementOutcome) {
+        RequirementsFilter requirementsFilter = new RequirementsFilter(environmentVariables);
+        return requirementsFilter.inDisplayOnlyTags(requirementOutcome.getRequirement());
     }
 
     public String getOverview() {

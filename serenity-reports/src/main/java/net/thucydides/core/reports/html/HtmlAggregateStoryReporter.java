@@ -2,6 +2,8 @@ package net.thucydides.core.reports.html;
 
 import net.serenitybdd.core.SerenitySystemProperties;
 import net.serenitybdd.core.time.Stopwatch;
+import net.serenitybdd.reports.model.FrequentFailure;
+import net.serenitybdd.reports.model.FrequentFailures;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.ReportType;
@@ -9,6 +11,7 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.*;
 import net.thucydides.core.requirements.DefaultRequirements;
 import net.thucydides.core.requirements.Requirements;
+import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -27,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
+import static net.thucydides.core.ThucydidesSystemProperty.REPORT_SCOREBOARD_SIZE;
 import static net.thucydides.core.guice.Injectors.getInjector;
 import static net.thucydides.core.reports.html.ReportNameProvider.NO_CONTEXT;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -41,6 +45,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlAggregateStoryReporter.class);
 
     private String projectName;
+    private String projectDirectory;
     private String relativeLink;
     private String tags;
     private final IssueTracking issueTracking;
@@ -88,7 +93,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
                                       final String relativeLink,
                                       final IssueTracking issueTracking,
                                       final EnvironmentVariables environmentVariables) {
-        this(projectName,relativeLink, issueTracking, environmentVariables, new DefaultRequirements());
+        this(projectName, relativeLink, issueTracking, environmentVariables, new DefaultRequirements());
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
@@ -119,18 +124,18 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         Stopwatch stopwatch = Stopwatch.started();
         copyScreenshotsFrom(sourceDirectory);
 
-        LOGGER.debug("Copied screenshots after {} ms", stopwatch.lapTime());
+        LOGGER.debug("Copied screenshots after {}", stopwatch.lapTimeFormatted());
 
         TestOutcomes allTestOutcomes = loadTestOutcomesFrom(sourceDirectory);
 
         if (!isEmpty(tags)) {
             allTestOutcomes = allTestOutcomes.withTags(getTags());
         }
-        LOGGER.debug("Loaded test outcomes after {} ms", stopwatch.lapTime());
+        LOGGER.debug("Loaded test outcomes after {}", stopwatch.lapTimeFormatted());
 
         generateReportsForTestResultsIn(allTestOutcomes);
 
-        LOGGER.debug("Generated reports after {} ms", stopwatch.lapTime());
+        LOGGER.debug("Generated reports after {}", stopwatch.lapTimeFormatted());
 
         return allTestOutcomes;
     }
@@ -142,24 +147,24 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     public void generateReportsForTestResultsIn(TestOutcomes testOutcomes) throws IOException {
 
         Stopwatch stopwatch = Stopwatch.started();
-        LOGGER.info("Generating test results for {} tests",testOutcomes.getTestCount());
+        LOGGER.debug("Generating test results for {} tests", testOutcomes.getTestCount());
 
         FreemarkerContext context = new FreemarkerContext(environmentVariables, requirements.getRequirementsService(), issueTracking, relativeLink);
 
         RequirementsOutcomes requirementsOutcomes = requirements.getRequirementsOutcomeFactory().buildRequirementsOutcomesFrom(testOutcomes);
 
-        LOGGER.info("{} requirements loaded after {} ms",requirementsOutcomes.getFlattenedRequirementCount(), stopwatch.lapTime());
+        LOGGER.debug("{} requirements loaded after {}", requirementsOutcomes.getFlattenedRequirementCount(), stopwatch.lapTimeFormatted());
 
         requirementsOutcomes = requirementsOutcomes.withoutUnrelatedRequirements();
 
-        LOGGER.info("{} related requirements found after {} ms",requirementsOutcomes.getFlattenedRequirementCount(), stopwatch.lapTime());
+        LOGGER.debug("{} related requirements found after {}", requirementsOutcomes.getFlattenedRequirementCount(), stopwatch.lapTimeFormatted());
 
 
         List<String> knownRequirementReportNames = requirementReportNamesFrom(requirementsOutcomes, reportNameProvider);
 
         Set<ReportingTask> reportingTasks = new CopyOnWriteArraySet<>();
 
-        LOGGER.info("Generating test outcome reports: " + generateTestOutcomeReports);
+        LOGGER.debug("Generating test outcome reports: " + generateTestOutcomeReports);
         if (generateTestOutcomeReports) {
             reportingTasks.addAll(HtmlTestOutcomeReportingTask.testOutcomeReportsFor(testOutcomes).using(environmentVariables, requirements.getRequirementsService(), getOutputDirectory(), issueTracking));
         }
@@ -168,17 +173,16 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         reportingTasks.add(new CopyResourcesTask());
         reportingTasks.add(new CopyTestResultsTask());
         reportingTasks.add(new AggregateReportingTask(context, environmentVariables, requirements.getRequirementsService(), getOutputDirectory(), testOutcomes));
-        reportingTasks.add(new TagTypeReportingTask(context, environmentVariables, getOutputDirectory(), reportNameProvider, testOutcomes));
         reportingTasks.addAll(TagReportingTask.tagReportsFor(testOutcomes).using(context,
-                                                                environmentVariables,
-                                                                getOutputDirectory(),
-                                                                reportNameProvider,
-                                                                testOutcomes.getTags(),
-                                                                knownRequirementReportNames));
+                environmentVariables,
+                getOutputDirectory(),
+                reportNameProvider,
+                testOutcomes.getTags(),
+                knownRequirementReportNames));
 
         reportingTasks.addAll(nestedTagReports(testOutcomes, context, knownRequirementReportNames));
 
-        reportingTasks.addAll(ResultReports.resultReportsFor(testOutcomes,context, environmentVariables, getOutputDirectory(),reportNameProvider));
+        reportingTasks.addAll(ResultReports.resultReportsFor(testOutcomes, context, environmentVariables, getOutputDirectory(), reportNameProvider));
 
         reportingTasks.addAll(RequirementsReports.requirementsReportsFor(
                 context, environmentVariables, getOutputDirectory(),
@@ -190,23 +194,40 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
                 requirementsOutcomes
         ));
 
-        LOGGER.info("Starting generating reports: {} ms", stopwatch.lapTime());
+        List<FrequentFailure> failures = FrequentFailures.from(testOutcomes)
+                .withMaxOf(REPORT_SCOREBOARD_SIZE.integerFrom(environmentVariables, 5));
+
+        failures.forEach(
+                failure -> reportingTasks.add(
+                        new ErrorTypeReportingTask(context,
+                                environmentVariables,
+                                requirements.getRequirementsService(),
+                                getOutputDirectory(),
+                                reportNameProvider,
+                                testOutcomes.withErrorType(failure.getType()).withLabel("Tests with error: " + failure.getName()),
+                                failure.getType())
+                )
+        );
+
         Reporter.generateReportsFor(reportingTasks);
-        LOGGER.info("Test results for {} tests generated in {} ms",testOutcomes.getTestCount(), stopwatch.stop());
+        LOGGER.info("Test results for {} tests generated in {} in directory: {}", testOutcomes.getTestCount(), stopwatch.executionTimeFormatted(), getOutputDirectory().toURI());
     }
+
 
     private Set<ReportingTask> nestedTagReports(TestOutcomes testOutcomes, FreemarkerContext context, List<String> knownRequirementReportNames) {
         Set<ReportingTask> reportingTasks = new HashSet<>();
 
-        for(TestTag knownTag : testOutcomes.getTags()) {
-            reportingTasks.addAll(TagReportingTask.tagReportsFor(testOutcomes.withTag(knownTag)).using(
-                    context.withParentTag(knownTag),
-                    environmentVariables,
-                    getOutputDirectory(),
-                    reportNameProvider.inContext(knownTag.getCompleteName()),
-                    testOutcomes.getTags(),
-                    knownRequirementReportNames));
-        }
+        testOutcomes.getTags().stream()
+                .filter(tag -> !requirements.getTypes().contains(tag.getType()))
+                .forEach(
+                        knownTag -> reportingTasks.addAll(TagReportingTask.tagReportsFor(testOutcomes.withTag(knownTag)).using(
+                                context.withParentTag(knownTag),
+                                environmentVariables,
+                                getOutputDirectory(),
+                                reportNameProvider.inContext(knownTag.getCompleteName()),
+                                testOutcomes.getTags(),
+                                knownRequirementReportNames))
+                );
         return reportingTasks;
     }
 
@@ -214,7 +235,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
                                                     ReportNameProvider reportNameProvider) {
 
         return requirementsOutcomes.getFlattenedRequirementOutcomes().stream()
-                .map( req -> reportNameProvider.forRequirement(req.getRequirement()) )
+                .map(req -> reportNameProvider.forRequirement(req.getRequirement()))
                 .collect(Collectors.toList());
     }
 
@@ -228,35 +249,40 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public void setIssueTrackerUrl(String issueTrackerUrl) {
         if (issueTrackerUrl != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL, issueTrackerUrl);
+            setEnvironmentProperty(ThucydidesSystemProperty.SERENITY_ISSUE_TRACKER_URL, issueTrackerUrl);
         }
+    }
+
+    private void setEnvironmentProperty(ThucydidesSystemProperty property, String value) {
+        getSystemProperties().setValue(property, value);
+        environmentVariables.setProperty(property.getPropertyName(), value);
     }
 
     public void setJiraUrl(String jiraUrl) {
         if (jiraUrl != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
+            setEnvironmentProperty(ThucydidesSystemProperty.JIRA_URL, jiraUrl);
         }
     }
 
     public void setJiraProject(String jiraProject) {
         if (jiraProject != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
+            setEnvironmentProperty(ThucydidesSystemProperty.JIRA_PROJECT, jiraProject);
         }
     }
 
     public void setJiraUsername(String jiraUsername) {
         if (jiraUsername != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_USERNAME, jiraUsername);
+            setEnvironmentProperty(ThucydidesSystemProperty.JIRA_USERNAME, jiraUsername);
         }
     }
 
     public void setTags(String tags) {
-        this.tags = tags;
+        this.tags = (tags != null) ? tags.replaceAll("\\s+((or)|(OR)|(and)|(AND))\\s+",",") : null;
     }
 
     public void setJiraPassword(String jiraPassword) {
         if (jiraPassword != null) {
-            getSystemProperties().setValue(ThucydidesSystemProperty.JIRA_PASSWORD, jiraPassword);
+            setEnvironmentProperty(ThucydidesSystemProperty.JIRA_PASSWORD, jiraPassword);
         }
     }
 
@@ -278,7 +304,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             return tagList;
         }
 
-        for(String tagValue : StringUtils.split(tags,",")) {
+        for (String tagValue : StringUtils.split(tags, ",")) {
             tagList.add(TestTag.withValue(tagValue.trim()));
         }
         return tagList;
@@ -286,6 +312,12 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public void setGenerateTestOutcomeReports() {
         this.generateTestOutcomeReports = true;
+    }
+
+    public void setProjectDirectory(String projectDirectory) {
+        this.projectDirectory = projectDirectory;
+        environmentVariables.setProperty("serenity.project.directory", projectDirectory);
+        System.setProperty("serenity.project.directory", projectDirectory);
     }
 
     private class CopyResourcesTask implements ReportingTask {

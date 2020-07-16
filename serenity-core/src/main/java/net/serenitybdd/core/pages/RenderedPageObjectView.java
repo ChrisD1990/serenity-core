@@ -4,11 +4,13 @@ import net.serenitybdd.core.collect.NewList;
 import net.thucydides.core.scheduling.NormalFluentWait;
 import net.thucydides.core.scheduling.ThucydidesFluentWait;
 import net.thucydides.core.steps.StepEventBus;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class RenderedPageObjectView {
         this.driver = driver;
         this.pageObject = pageObject;
         setWaitForTimeout(waitForTimeout);
-        this.webdriverClock = new SystemClock();
+        this.webdriverClock = Clock.systemDefaultZone();
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         this.timeoutCanBeOverriden = timeoutCanBeOverriden;
     }
@@ -58,7 +60,7 @@ public class RenderedPageObjectView {
     }
 
     public ThucydidesFluentWait<WebDriver> waitForCondition() {
-        return new NormalFluentWait<>(driver, webdriverClock, sleeper)
+        return new NormalFluentWait(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeout)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class,
@@ -102,6 +104,11 @@ public class RenderedPageObjectView {
     public void waitFor(final ExpectedCondition expectedCondition) {
         doWait().until(expectedCondition);
     }
+
+    public void waitFor(String message, final ExpectedCondition<WebDriver> expectedCondition) {
+        doWait().until(new WaitForWithMessage<>(message, expectedCondition));
+    }
+
 
     public void waitFor(String xpathOrCssSelector) {
         waitFor(xpathOrCssSelector(xpathOrCssSelector));
@@ -236,6 +243,11 @@ public class RenderedPageObjectView {
             waitForCondition().until(textPresent(expectedText));
         }
     }
+
+    public WebDriverWait thenWait() {
+        return new WebDriverWait(driver, getWaitForTimeout().getSeconds());
+    }
+
 
     private ExpectedCondition<Boolean> textPresentInElement(final WebElement element, final String expectedText) {
         return new ExpectedCondition<Boolean>() {
@@ -396,12 +408,14 @@ public class RenderedPageObjectView {
     private ExpectedCondition<Boolean> allTextPresent(final String... expectedTexts) {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
-                for (String expectedText : expectedTexts) {
-                    if (!containsText(expectedText)) {
-                        return false;
-                    }
-                }
-                return true;
+                return Arrays.stream(expectedTexts).allMatch(expectedText -> containsText(expectedText));
+//
+//                for (String expectedText : expectedTexts) {
+//                    if (!containsText(expectedText)) {
+//                        return false;
+//                    }
+//                }
+//                return true;
             }
 
             @Override
@@ -531,5 +545,13 @@ public class RenderedPageObjectView {
     public <T extends WebElementFacade> T moveTo(String xpathOrCssSelector) {
         pageObject.withAction().moveToElement(pageObject.findBy(xpathOrCssSelector));
         return pageObject.findBy(xpathOrCssSelector);
+    }
+
+    public WebElementFacadeWait waitForElement() {
+        return new WebElementFacadeWait(pageObject);
+    }
+
+    public WebElementFacadeWait waitForElementForUpTo(long timeoutInSeconds) {
+        return new WebElementFacadeWait(pageObject, timeoutInSeconds);
     }
 }

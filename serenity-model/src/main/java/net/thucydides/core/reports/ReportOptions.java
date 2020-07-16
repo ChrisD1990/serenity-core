@@ -22,6 +22,7 @@ public class ReportOptions {
     final private boolean showTagMenus;
     final private boolean showRelatedTags;
     final private String projectName;
+    final private String projectSubTitle;
     final private RequirementsService requirementsService;
     final private boolean displayPiechart;
     final private List<String> firstClassTagTypes;
@@ -33,13 +34,14 @@ public class ReportOptions {
     public ReportOptions(EnvironmentVariables environmentVariables, RequirementsService requirementsService) {
         showStepDetails = Boolean.valueOf(THUCYDIDES_REPORTS_SHOW_STEP_DETAILS.from(environmentVariables, "false"));
         showManualTests = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_MANUAL_TESTS.from(environmentVariables, "true"));
-        showReleases = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_RELEASES.from(environmentVariables, "true"));
+        showReleases = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_RELEASES.from(environmentVariables, "false"));
         showProgress = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_PROGRESS.from(environmentVariables, "false"));
         showHistory = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_HISTORY.from(environmentVariables, "false"));
         showTagMenus = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_TAG_MENUS.from(environmentVariables, "false"));
         showRelatedTags = Boolean.valueOf(SHOW_RELATED_TAGS.from(environmentVariables, "true"));
         displayPiechart = Boolean.valueOf(SHOW_PIE_CHARTS.from(environmentVariables, "true"));
         projectName = SERENITY_PROJECT_NAME.from(environmentVariables,"");
+        projectSubTitle = REPORT_SUBTITLE.from(environmentVariables,"");
         this.requirementsService = requirementsService;
         firstClassTagTypes = Splitter.on(",").omitEmptyStrings().splitToList(THUCYDIDES_REPORT_TAG_MENUS.from(environmentVariables,""));
     }
@@ -78,6 +80,10 @@ public class ReportOptions {
 
     public String getProjectName() {
         return projectName;
+    }
+
+    public String getProjectSubTitle() {
+        return projectSubTitle;
     }
 
     public boolean isDisplayPiechart() {

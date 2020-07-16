@@ -8,6 +8,7 @@ import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.requirements.RequirementsMerger;
 import net.thucydides.core.requirements.RequirementsProvided;
 import net.thucydides.core.requirements.RequirementsTagProvider;
+import net.thucydides.core.requirements.RequirementsTree;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.requirements.model.RequirementTree;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -50,6 +51,8 @@ public class MultipleSourceRequirmentsOutcomeFactory implements RequirementsOutc
     public RequirementsOutcomes buildRequirementsOutcomesFrom(TestOutcomes testOutcomes) {
         List<Requirement> allRequirements = new ArrayList<>();
 
+        LOGGER.debug("Loading requirements from tag providers :" + requirementsTagProviders);
+
         for (RequirementsTagProvider tagProvider : requirementsTagProviders) {
             allRequirements = new RequirementsMerger().merge(allRequirements, RequirementsProvided.by(tagProvider));
         }
@@ -60,7 +63,8 @@ public class MultipleSourceRequirmentsOutcomeFactory implements RequirementsOutc
                                                             .map(overviewText -> overviewText.get())
                                                             .findFirst();
 
-        LOGGER.debug("Merged requirements set:{}{}", System.lineSeparator(), RequirementTree.withRequirements(allRequirements));
+        LOGGER.debug("LOADED REQUIREMENTS:{}{}", System.lineSeparator(), RequirementTree.withRequirements(allRequirements));
+
         return new RequirementsOutcomes(allRequirements,
                 testOutcomes,
                 issueTracking,

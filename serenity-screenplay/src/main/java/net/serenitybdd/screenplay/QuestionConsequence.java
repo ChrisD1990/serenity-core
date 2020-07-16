@@ -35,7 +35,7 @@ public class QuestionConsequence<T> extends BaseConsequence<T> {
     public void evaluateFor(Actor actor) {
         if (thisStepShouldBeIgnored() && !StepEventBus.getEventBus().softAssertsActive()) { return; }
 
-        Broadcaster.getEventBus().post(new ActorAsksQuestion(question));
+        Broadcaster.getEventBus().post(new ActorAsksQuestion(question, actor.getName()));
 
         Serenity.injectScenarioStepsInto(question);
 
@@ -64,7 +64,7 @@ public class QuestionConsequence<T> extends BaseConsequence<T> {
     @Override
     public String toString() {
         String template = explanation.orElse("Then %s should be %s");
-        String expectedExpression = StripRedundantTerms.from(expected.toString());
+        String expectedExpression =  StripRedundantTerms.from(expected.toString());
         return addRecordedInputValuesTo(String.format(template, subjectText.orElse(subject), expectedExpression));
     }
 }

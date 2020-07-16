@@ -43,7 +43,7 @@ public class RestReportingHelper {
 
     public RestQuery recordRestSpecificationData(final RestMethod method, final RequestSpecificationDecorated spec,
                                                  final String path, final Object... params) {
-        final Map<LogDetail, String> values = new HashMap();
+        final Map<LogDetail, String> values = new HashMap<>();
         for (final Filter filter : spec.getDefinedFilters()) {
             if (filter instanceof FieldsRecordingFilter) {
                 final FieldsRecordingFilter internal = (FieldsRecordingFilter) filter;
@@ -71,7 +71,8 @@ public class RestReportingHelper {
         if (shouldRecordResponseBodyFor(response)) {
             String renderedBody = new Prettifier().getPrettifiedBodyIfPossible(
                     (ResponseOptions) response.getBody(), response.getBody());
-            restQuery = restQuery.withResponse(renderedBody);
+
+            restQuery = restQuery.withResponse(renderedBody.isEmpty() ? response.asString() : renderedBody);
         }
         restQuery = restQuery.withStatusCode(response.getStatusCode())
                 .withResponseHeaders(firstNonNull(values.get(LogDetail.HEADERS), ""))

@@ -10,6 +10,7 @@ import net.thucydides.core.model.TestType;
 import net.thucydides.core.model.formatters.ReportFormatter;
 import net.thucydides.core.reports.TestOutcomeCounter;
 import net.thucydides.core.reports.TestOutcomes;
+import net.thucydides.core.reports.html.RequirementsFilter;
 import net.thucydides.core.requirements.ExcludedUnrelatedRequirementTypes;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -85,6 +86,10 @@ public class RequirementOutcome {
         return getTestOutcomes().getResult() == TestResult.IGNORED || anyChildRequirementsAreIgnored();
     }
 
+    public boolean isSkipped() {
+        return getTestOutcomes().getResult() == TestResult.SKIPPED || anyChildRequirementsAreSkipped();
+    }
+
     public int getFlattenedRequirementCount() {
         return getFlattenedRequirements().size();
     }
@@ -135,6 +140,10 @@ public class RequirementOutcome {
 
     private boolean anyChildRequirementsAreIgnored() {
         return anyChildRequirementsAreIgnoredFor(requirement.getChildren());
+    }
+
+    private boolean anyChildRequirementsAreSkipped() {
+        return anyChildRequirementsAreSkippedFor(requirement.getChildren());
     }
 
     private boolean allChildRequirementsAreSuccessfulFor(List<Requirement> requirements) {
@@ -216,6 +225,18 @@ public class RequirementOutcome {
         return false;
     }
 
+    private boolean anyChildRequirementsAreSkippedFor(List<Requirement> requirements) {
+        for(Requirement childRequirement : requirements) {
+            RequirementOutcome childOutcomes = new RequirementOutcome(childRequirement,
+                    testOutcomes.forRequirement(requirement), issueTracking);
+            if (childOutcomes.isSkipped()) {
+                return true;
+            } else if (anyChildRequirementsAreIgnoredFor(childRequirement.getChildren())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public String getCardNumberWithLinks() {
         if (requirement.getCardNumber() != null) {
@@ -321,6 +342,17 @@ public class RequirementOutcome {
         return new RequirementOutcome(prunedRequirement, testOutcomes, requirementsWithoutTests, estimatedUnimplementedTests, issueTracking);
     }
 
+    public RequirementOutcome filteredByDisplayTag() {
+
+        List<Requirement> childRequirementsWithMatchingTag = getRequirement().getChildren().stream()
+                .filter(this::isFilteredByDisplayTag)
+                .collect(Collectors.toList());
+
+        Requirement filteredRequirement = getRequirement().withChildren(childRequirementsWithMatchingTag);
+        return new RequirementOutcome(filteredRequirement, testOutcomes, requirementsWithoutTests, estimatedUnimplementedTests, issueTracking);
+
+    }
+
     public boolean shouldPrune(RequirementOutcome requirementOutcome) {
         return ExcludedUnrelatedRequirementTypes.definedIn(environmentVariables)
                 .excludeUntestedChildrenOfRequirementOfType(requirementOutcome.getRequirement().getType());
@@ -329,6 +361,11 @@ public class RequirementOutcome {
 
     private boolean isTested(Requirement childRequirement) {
         return !testOutcomes.forRequirement(childRequirement).getOutcomes().isEmpty();
+    }
+
+    private boolean isFilteredByDisplayTag(Requirement childRequirement) {
+        RequirementsFilter requirementsFilter = new RequirementsFilter(environmentVariables);
+        return !requirementsFilter.inDisplayOnlyTags(childRequirement);
     }
 
     public class OutcomeCounter extends TestOutcomeCounter {

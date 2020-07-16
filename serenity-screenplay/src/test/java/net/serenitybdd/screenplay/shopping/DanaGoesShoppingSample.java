@@ -1,10 +1,13 @@
 package net.serenitybdd.screenplay.shopping;
 
 import net.serenitybdd.core.collect.NewList;
-import net.serenitybdd.PeopleAreTerriblyIncorrect;
 import net.serenitybdd.junit.runners.SerenityRunner;
 import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.GivenWhenThen;
+import net.serenitybdd.screenplay.ThisTakesTooLong;
+import net.serenitybdd.screenplay.waits.Wait;
 import net.serenitybdd.screenplay.shopping.questions.NestedThankYouMessage;
+import net.serenitybdd.screenplay.shopping.tasks.Checkout;
 import net.serenitybdd.screenplay.shopping.tasks.HaveItemsDelivered;
 import net.serenitybdd.screenplay.shopping.tasks.Purchase;
 import net.thucydides.core.annotations.Steps;
@@ -14,15 +17,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-import java.util.function.Predicate;
 
+import static java.util.function.Predicate.isEqual;
+import static net.serenitybdd.screenplay.EventualConsequence.eventually;
 import static net.serenitybdd.screenplay.GivenWhenThen.*;
-import static net.serenitybdd.screenplay.shopping.questions.DisplayedPrices.thePriceIsCorrectlyDisplayed;
-import static net.serenitybdd.screenplay.shopping.questions.DisplayedPrices.thePriceIsIncorrectlyDisplayed;
-import static net.serenitybdd.screenplay.shopping.questions.DisplayedPrices.thePriceIsIncorrectlyDisplayedWithAnError;
+import static net.serenitybdd.screenplay.shopping.questions.DisplayedPrices.*;
+import static net.serenitybdd.screenplay.shopping.questions.NextPersonToBeServed.*;
 import static net.serenitybdd.screenplay.shopping.questions.ThankYouMessage.theThankYouMessage;
 import static net.serenitybdd.screenplay.shopping.questions.TotalCost.theTotalCost;
 import static net.serenitybdd.screenplay.shopping.questions.TotalCostIncludingDelivery.theTotalCostIncludingDelivery;
+import static net.serenitybdd.screenplay.shopping.tasks.Checkout.*;
+import static net.serenitybdd.screenplay.shopping.tasks.JoinTheCheckoutQueue.*;
 import static net.serenitybdd.screenplay.shopping.tasks.Purchase.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -41,13 +46,13 @@ public class DanaGoesShoppingSample {
     @Test
     public void shouldBeAbleToPurchaseSomeItemsWithDelivery() {
         givenThat(dana).has(purchased().anApple().thatCosts(10).dollars(),
-                            andPurchased().aPear().thatCosts(5).dollars());
+                andPurchased().aPear().thatCosts(5).dollars());
 
         when(dana).attemptsTo(haveThemDelivered);
 
         then(dana).should(seeThat(theTotalCost(), equalTo(15)),
-                          seeThat(theTotalCostIncludingDelivery(), greaterThanOrEqualTo(20)),
-                          seeThat(theThankYouMessage(), equalTo("Thank you")));
+                seeThat(theTotalCostIncludingDelivery(), greaterThanOrEqualTo(20)),
+                seeThat(theThankYouMessage(), equalTo("Thank you")));
     }
 
     @Test
@@ -57,7 +62,8 @@ public class DanaGoesShoppingSample {
 
         when(dana).attemptsTo(haveThemDelivered);
 
-        then(dana).should(seeThat("Total cost", theTotalCost(), Predicate.isEqual(15)));
+        then(dana).should(seeThat("Total cost", theTotalCost(),
+                GivenWhenThen.returnsAValueThat("is equal to 15", isEqual(15))));
     }
 
     @Test
@@ -92,7 +98,7 @@ public class DanaGoesShoppingSample {
 
         then(dana).should(seeThat(theTotalCostIncludingDelivery(), greaterThanOrEqualTo(20)),
                 seeThat(theThankYouMessage(), equalTo("You're welcome"))
-                        .orComplainWith(PeopleAreSoImpolite.class,"You should say something nice"));
+                        .orComplainWith(PeopleAreSoImpolite.class, "You should say something nice"));
     }
 
 
@@ -115,7 +121,7 @@ public class DanaGoesShoppingSample {
         givenThat(dana).has(purchased().anApple().thatCosts(10).dollars(),
                 andPurchased().aPear().thatCosts(5).dollars());
 
-        when(dana).attemptsTo(haveThemDelivered);
+        when(dana).attemptsTo(new HaveItemsDelivered());
 
         then(dana).should(seeThat(thePriceIsCorrectlyDisplayed()));
     }
@@ -134,11 +140,11 @@ public class DanaGoesShoppingSample {
     public void shouldBeAbleToEvaluateErrorConsequenceGroups() {
         givenThat(dana).has(purchased().anApple().thatCosts(10).dollars(),
                 andPurchased().aPear().thatCosts(5).dollars());
-
         when(dana).attemptsTo(haveThemDelivered);
 
         then(dana).should(seeThat(thePriceIsIncorrectlyDisplayedWithAnError()));
     }
+
 
     @Test
     public void shouldBeAbleToEvaluateNestedGroup() {
@@ -197,9 +203,9 @@ public class DanaGoesShoppingSample {
         dana.remember("Total Cost", 14);
         assertThat((int) dana.recall("Total Cost")).isEqualTo(14);
 
-        List<String> colorSet = NewList.of("red","green","blue");
+        List<String> colorSet = NewList.of("red", "green", "blue");
 
-        MatcherAssert.assertThat(colorSet, (Every.everyItem(isOneOf("red","green","blue","yellow"))));
+        MatcherAssert.assertThat(colorSet, (Every.everyItem(isOneOf("red", "green", "blue", "yellow"))));
     }
 
     @Test
@@ -229,10 +235,10 @@ public class DanaGoesShoppingSample {
     @Test
     public void shouldBeAbleToPurchaseAnItemWithAllTheRightDetails() {
         givenThat(dana).attemptsTo(purchase().anApple().thatCosts(10).dollars(),
-                                   purchase().aPear().thatCosts(5).dollars());
+                purchase().aPear().thatCosts(5).dollars());
 
         then(dana).should(seeThat(theTotalCost(), equalTo(20)),
-                                  seeThat(theThankYouMessage(), equalTo("De nada")));
+                seeThat(theThankYouMessage(), equalTo("De nada")));
     }
 
     // Expected to fail with two failures and a compromised test
@@ -255,6 +261,54 @@ public class DanaGoesShoppingSample {
 
         then(dana).should(seeThat(theTotalCost(), equalTo(20)));
         and(dana).should(seeThat(theThankYouMessage(), equalTo("De nada")));
+    }
+
+    @Test
+    public void shouldBeAbleToWaitInCheckoutLine() {
+        Checkout fastCheckout = fastCheckout();
+
+        givenThat(dana).attemptsTo(joinTheCheckoutQueue().of(fastCheckout));
+
+        then(dana).should(eventually(seeThat(
+            nextPersonToBeServed().by(fastCheckout), is("Dana")
+        )).waitingForNoLongerThan(3).seconds()
+            .orComplainWith(ThisTakesTooLong.class));
+    }
+
+    @Test
+    public void shouldPatientlyWaitInCheckoutLine() {
+        Checkout slowCheckout = slowCheckout();
+
+        givenThat(dana).attemptsTo(joinTheCheckoutQueue().of(slowCheckout));
+
+        then(dana).should(eventually(seeThat(
+            nextPersonToBeServed().by(slowCheckout), is("Dana")
+        )).waitingForNoLongerThan(10).seconds()
+            .orComplainWith(ThisTakesTooLong.class));
+    }
+
+    @Test
+    public void shouldPatientlyWaitThenPurchaseItems() {
+        Checkout slowCheckout = slowCheckout();
+
+        givenThat(dana).attemptsTo(
+            joinTheCheckoutQueue().of(slowCheckout),
+            Wait.until(nextPersonToBeServed().by(slowCheckout), is("Dana"))
+                .forNoLongerThan(10).seconds(),
+            purchase().anApple().thatCosts(10).dollars()
+        );
+    }
+
+    @Test(expected = ThisTakesTooLong.class)
+    public void shouldImpatientlyWaitInCheckoutLine() {
+        Checkout fastCheckout = fastCheckout();
+
+        givenThat(dana).attemptsTo(joinTheCheckoutQueue().of(fastCheckout));
+
+        then(dana).should(eventually(seeThat(
+            nextPersonToBeServed().by(fastCheckout), is("Dana")
+        )).waitingForNoLongerThan(1).seconds()
+            .orComplainWith(ThisTakesTooLong.class));
     }
 }
 

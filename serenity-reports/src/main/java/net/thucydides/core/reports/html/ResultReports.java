@@ -11,8 +11,6 @@ import java.util.List;
 
 public class ResultReports {
 
-    private static final String TEST_OUTCOME_TEMPLATE_PATH = "freemarker/home.ftl";
-
     public static List<ReportingTask> resultReportsFor(TestOutcomes testOutcomes,
                                                        FreemarkerContext freemarker,
                                                        EnvironmentVariables environmentVariables,
@@ -36,8 +34,7 @@ public class ResultReports {
                             environmentVariables,
                             outputDirectory,
                             testOutcomes.withTag(tag),
-                            new ReportNameProvider(tag.getName()),
-                            tag));
+                            new ReportNameProvider(tag.getName()), tag));
         }
         return reportingTasks;
     }
@@ -59,7 +56,7 @@ public class ResultReports {
         }
         if ((testOutcomesForThisTag.getTotalTests().withResult(TestResult.FAILURE) > 0)
                 || (testOutcomesForThisTag.getTotalTests().withResult(TestResult.ERROR) > 0)) {
-            tasks.add(resultReport(freemarker, environmentVariables, outputDirectory, testOutcomesForThisTag.getFailingOrErrorTests(), reportName, tag, "broken"));
+            tasks.add(resultReport(freemarker, environmentVariables, outputDirectory, testOutcomesForThisTag.getUnsuccessfulTests(), reportName, tag, "broken"));
         }
         if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.FAILURE) > 0) {
             tasks.add(resultReport(freemarker, environmentVariables, outputDirectory, testOutcomesForThisTag.getFailingTests(), reportName, tag, "failure"));
